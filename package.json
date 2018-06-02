@@ -1,0 +1,45 @@
+{
+  "name": "mobile-lys",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "jest-expo": "~27.0.0",
+    "react-native-scripts": "1.14.0",
+    "react-test-renderer": "16.3.1"
+  },
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "scripts": {
+    "start": "react-native-scripts start",
+    "eject": "react-native-scripts eject",
+    "android": "react-native-scripts android",
+    "ios": "react-native-scripts ios",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "base-64": "^0.1.0",
+    "expo": "^27.0.1",
+    "firebase": "^5.0.3",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.1",
+    "native-base": "^2.4.5",
+    "react": "16.3.1",
+    "react-native": "~0.55.2",
+    "react-native-easy-grid": "^0.1.17",
+    "react-native-elements": "^0.19.1",
+    "react-native-keyboard-spacer": "^0.4.1",
+    "react-native-loading-spinner-overlay": "^0.5.2",
+    "react-native-redux-listener": "^0.3.0",
+    "react-native-router-flux": "^4.0.0-beta.31",
+    "react-native-size-matters": "^0.1.0",
+    "react-native-sound": "^0.10.9",
+    "react-native-video": "^2.0.0",
+    "react-redux": "^5.0.7",
+    "react-router-native": "^4.2.0",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0"
+  }
+}
