@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-native";
 import { deleteArticle } from "../actions/index";
+import { Audio } from 'expo';
 
 import { Image } from 'react-native';
 import {
@@ -10,9 +11,7 @@ import {
   Thumbnail, Left, Body, Right
 } from 'native-base';
 
-import Video from 'react-native-video';
-
-const base64 = require('base-64');
+import recordingsStorageRef from '../firebase';
 
 if (!global.atob) {
   global.atob = require('base-64').decode;
@@ -24,8 +23,24 @@ class ArticleListItem extends React.Component {
     recordingIsPlaying: false
   }
 
-  play = (sound) => {
-    sound.play();
+  play = async (url) => {
+    if (url === '') {
+      alert('No recording yet for this article')
+    }
+    else {
+      const soundObject = new Audio.Sound();
+      try {
+        await soundObject.loadAsync(
+          { uri: url },
+          initialStatus = {},
+          downloadFirst = true
+        );
+        await soundObject.playAsync();
+        // Your sound is playing!
+      } catch (error) {
+        console.log(error);
+      }
+    }
     // this.setState({recordingIsPlaying: true});
   }
 
@@ -34,54 +49,22 @@ class ArticleListItem extends React.Component {
     // this.setState({recordingIsPlaying: false});
   }
 
-  /**
-   * Convert a base64 string in a Blob according to the data and contentType.
-   */
-  base64ToBlob = (b64Data, contentType, sliceSize) => {
-          contentType = contentType || '';
-          sliceSize = sliceSize || 512;
-
-          var byteCharacters = atob(b64Data);
-          var byteArrays = [];
-
-          for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-              var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-              var byteNumbers = new Array(slice.length);
-              for (var i = 0; i < slice.length; i++) {
-                  byteNumbers[i] = slice.charCodeAt(i);
-              }
-
-              var byteArray = new Uint8Array(byteNumbers);
-
-              byteArrays.push(byteArray);
-          }
-
-        var blob = new Blob(byteArrays, {type: contentType});
-
-        return blob;
-  }
-
   componentWillMount() {
     const { article } = this.props;
-
-    if (article.recording) {
-      /** Process the type1 base64 string **/
-      var myBaseString = article.recording;
-
-      // Split the base64 string in data and contentType
-      var block = myBaseString.split(";");
-      // Get the content type
-      var dataType = block[0].split(":")[1];// In this case "audio/mpeg"
-      // get the real base64 content of the file
-      var realData = block[1].split(",")[1];// In this case "SUQzAwAAAAAD...."
-
-      console.log(this.base64ToBlob(realData, dataType));
-    }
   }
 
   render() {
     const { articleId, article, deleteArticle } = this.props;
+    let recordingURL = '';
+    if (article.recordingRef !== '' && article.recordingRef < 100) {
+      console.log(article.recordingRef);
+      recordingsStorageRef.child(article.recordingRef).getDownloadURL().then(function(url) {
+        // `url` is the download URL for 'images/stars.jpg'
+        recordingURL = url;
+      }).catch(function(error) {
+        console.log(error);
+      });
+    }
     // make the recording available to this environment
     // const sound = new Audio(article.recording);
     return (
@@ -108,7 +91,7 @@ class ArticleListItem extends React.Component {
           </CardItem>
           <CardItem>
             <Left>
-              <Button transparent onPress={() => alert('Sort out the pause functionality')}>
+              <Button transparent onPress={() => this.play(recordingURL)}>
                 <Icon active name="play" />
                 <Text>Play</Text>
               </Button>
